@@ -3,13 +3,13 @@
 Sub inputPic(ByVal target As Excel.Range, ByVal Tool As String)
     
     Dim myF As Variant      '写真のファイルアドレス
-    Dim strD As String      'このファイルが存在するディレクトリ
+    Dim strD As String      '写真のディレクトリ
     Dim strF As String      'ディレクトリ内のファイル
-    Dim text As String
+    Dim text As String      '作業用レジスタ
     
-'=====画像取得=====
+    '=====画像取得=====
     'ファイルの場所取得
-    strD = Replace(ActiveWorkbook.Path, "\page", "\image\")
+    strD = ActiveWorkbook.Path & "\image\"
     strF = Dir(strD)
     
     Do While strF <> ""
@@ -18,15 +18,16 @@ Sub inputPic(ByVal target As Excel.Range, ByVal Tool As String)
         text = Replace(text, " ", "")
         If text Like Tool & ".jpg" Or text Like Tool & ".png" Or text Like Tool & ".JPG" Then
             myF = strD & strF
+            Exit Do
         End If
         strF = Dir()
     Loop
     If myF = Empty Then
-        target.Value = "対象の画像が存在しません。" & vbCrLf & "対象協賛名：" & Tool
+        target.Value = "対象の画像が存在しません。" & vbCrLf & "対象アイテム：" & Tool
         Exit Sub
     End If
     
-'=====画像添付=====
+    '=====画像添付=====
     '指定座標への画像添付
     With ActiveSheet.Shapes.AddPicture( _
         Filename:=myF, _
